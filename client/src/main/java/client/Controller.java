@@ -51,7 +51,7 @@ public class Controller implements Initializable {
 
     private boolean authenticated;
     private String nickname;
-
+    private String login;
     private Stage stage;
     private Stage regStage;
     private RegController regController;
@@ -66,6 +66,7 @@ public class Controller implements Initializable {
         authPanel.setManaged(!authenticated);
         if (!authenticated) {
             nickname = "";
+            History.stop();
         }
         setTitle(nickname);
         textArea.clear();
@@ -106,6 +107,8 @@ public class Controller implements Initializable {
                             if (str.startsWith(Command.AUTH_OK)) {
                                 nickname = str.split("\\s")[1];
                                 setAuthenticated(true);
+                                textArea.appendText(History.getLast100Lines(login));
+                                History.start(login);
                                 break;
                             }
 
@@ -147,6 +150,7 @@ public class Controller implements Initializable {
 
                         } else {
                             textArea.appendText(str + "\n");
+                            History.writeLine(str);
                         }
                     }
                 } catch (RuntimeException e) {
@@ -183,7 +187,7 @@ public class Controller implements Initializable {
         if (socket == null || socket.isClosed()) {
             connect();
         }
-
+        login=loginField.getText().trim();
         String msg = String.format("%s %s %s", Command.AUTH, loginField.getText().trim(), passwordField.getText().trim());
 
         try {
