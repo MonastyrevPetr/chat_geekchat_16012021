@@ -13,15 +13,16 @@ public class Server {
     private Socket socket;
     private final int PORT = 8189;
     private List<ClientHandler> clients;
-    private AuthService authService;
+    private AuthServiceDataBase authService;
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
-        authService = new SimpleAuthService();
+        authService = new AuthServiceDataBase();
 
         try {
             server = new ServerSocket(PORT);
             System.out.println("Server started");
+
 
             while (true) {
                 socket = server.accept();
@@ -34,6 +35,7 @@ public class Server {
         } finally {
             try {
                 server.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
